@@ -23,7 +23,7 @@ jobs:
       - name: download source and .config file and update feeds
         run: |
           git clone https://github.com/openwrt/openwrt.git -b openwrt-24.10
-          curl -L -o openwrt/.config "https://github.com/hosxy/openwrt-build/.config"
+          curl -L -o openwrt/.config "https://github.com/hosxy/openwrt-build/blob/master/.config"
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           git clone https://github.com/jerrykuku/luci-theme-argon.git openwrt/package/luci-theme-argon
@@ -36,6 +36,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: openwrt
-          path: ./bin/targets/x86/64/*.img.gz
+          path: openwrt/bin/targets/x86/64/*.img.gz
         
           
