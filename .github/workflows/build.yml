@@ -30,13 +30,13 @@ jobs:
 
       - name: check build environment
         run: |
+          cd openwrt
           make defconfig
-          rm openwrt/.config
+          rm .config
           curl -L -o openwrt/.config "https://github.com/hosxy/openwrt-build/blob/master/.config"
        
       - name: build openwrt
         run: |
-          cd openwrt
           make download V=s -j$(nproc)
           make V=s -j$(nproc)
 
