@@ -25,8 +25,8 @@ jobs:
         run: |
           git clone https://github.com/openwrt/openwrt.git -b openwrt-24.10
           curl -L -o openwrt/.config "https://github.com/hosxy/openwrt-build/blob/master/.config"
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
+          openwrt/scripts/feeds update -a
+          openwrt/scripts/feeds install -a
           git clone https://github.com/jerrykuku/luci-theme-argon.git openwrt/package/luci-theme-argon
           
       - name: build openwrt
