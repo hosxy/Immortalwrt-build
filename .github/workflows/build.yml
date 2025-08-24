@@ -21,14 +21,14 @@ jobs:
           sudo apt upgrade -y
           sudo apt install -y autoconf automake autopoint binutils build-essential bzip2 ccache clang cmake cpio curl flex gawk gettext git gperf intltool libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool llvm msmtp ninja-build p7zip p7zip-full patch pkgconf python3 squashfs-tools swig unzip vim wget xxd zlib1g-dev
           
-      - name: download source and .config file and update feeds
+      - name: download OpenWRT source and update feeds
         run: |
           git clone https://github.com/openwrt/openwrt.git -b openwrt-24.10
           openwrt/scripts/feeds update -a
           openwrt/scripts/feeds install -a
           git clone https://github.com/jerrykuku/luci-theme-argon.git openwrt/package/luci-theme-argon
 
-      - name: check build environment
+      - name: check build environment and download config file
         run: |
           cd openwrt
           make defconfig
@@ -37,12 +37,13 @@ jobs:
        
       - name: build openwrt
         run: |
+          cd openwrt
           make download V=s -j$(nproc)
           make V=s -j$(nproc)
 
       - uses: actions/upload-artifact@v4
         with:
           name: openwrt
-          path: bin/targets/x86/64/*.img.gz
+          path: openwrt/bin/targets/x86/64/*.img.gz
         
           
