@@ -6,6 +6,7 @@ name: OpenWRT Build
 on:
   release:
     types: [published]
+    workflow_dispatch:
 
 jobs:
   build:
