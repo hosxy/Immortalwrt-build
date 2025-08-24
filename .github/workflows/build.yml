@@ -17,7 +17,6 @@ jobs:
 
       - name: install depences
         run: |
-          sudo apt purge snapd -y
           sudo apt update -y
           sudo apt upgrade -y
           sudo apt install -y autoconf automake autopoint binutils build-essential bzip2 ccache clang cmake cpio curl flex gawk gettext git gperf intltool libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool llvm msmtp ninja-build p7zip p7zip-full patch pkgconf python3 squashfs-tools swig unzip vim wget xxd zlib1g-dev
