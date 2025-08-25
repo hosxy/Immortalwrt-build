@@ -35,10 +35,14 @@ jobs:
           rm .config
           curl -L -o .config "https://raw.githubusercontent.com/hosxy/openwrt-build/refs/heads/master/config"
        
-      - name: build openwrt
+      - name: download build dependence
         run: |
           cd openwrt
           make download V=s -j$(nproc)
+
+      - name: build openwrt
+        run: |
+          cd openwrt
           make V=s -j$(nproc)
 
       - uses: actions/upload-artifact@v4
