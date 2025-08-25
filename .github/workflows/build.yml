@@ -12,19 +12,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      
+
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          temp-reserve-mb: 100
+          swap-size-mb: 512
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+          
       - uses: actions/checkout@v4
 
       - name: check space
         run: df -h
-
+       
       - name: install depences
         run: |
           sudo apt update -y
           sudo apt upgrade -y
           sudo apt install -y autoconf automake autopoint binutils build-essential bzip2 ccache clang cmake cpio curl flex gawk gettext git gperf intltool libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool llvm msmtp ninja-build p7zip p7zip-full patch pkgconf python3 squashfs-tools swig unzip vim wget xxd zlib1g-dev
-          sudo apt purge -y azure-cli ghc* hhvm zulu* firefox google* dotnet* powershell openjdk* adoptopenjdk* moby* mysql*  php* mongodb* snapd*
-          sudo apt autoremove
           sudo apt clean
           df -h
           
