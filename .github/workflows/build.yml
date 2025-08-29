@@ -81,18 +81,18 @@ jobs:
        #下载构建依赖
       - name: download build dependence
         run: |
-          cd openwrt
+          cd immortalwrt
           make download V=s -j$(nproc)
 
       #开始编译
       - name: build openwrt
         run: |
-          cd openwrt
+          cd immortalwrt
           make V=s -j$(nproc)
 
       - uses: actions/upload-artifact@v4
         with:
-          name: openwrt
-          path: openwrt/bin/targets/x86/64/*.img.gz
+          name: immortalwrt
+          path: immortalwrt/bin/targets/x86/64/*.img.gz
         
           
