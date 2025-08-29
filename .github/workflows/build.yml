@@ -54,29 +54,33 @@ jobs:
           sudo apt clean
           df -h
           
+      - name: 安装 Go 1.21.1
+        uses: actions/setup-go@v3
+        with:
+          go-version: 'stable'
+    
 
       - name: 下载源码、更新 feeds
         run: |
           git clone https://github.com/openwrt/openwrt.git -b openwrt-24.10
           openwrt/scripts/feeds update -a
           openwrt/scripts/feeds install -a
-          git clone https://github.com/jerrykuku/luci-theme-argon.git openwrt/package/luci-theme-argon
 
       # 开启缓存
       - uses: stupidloud/cachewrtbuild@main
         with:
           ccache: 'true'
           toolchain: 'true'
-          mixkey: 'ramips'
-          prefix: 'openwrt'
+          mixkey: 'x64'
+          prefix: 'immortalwrt'
 
       #下载配置文件
       - name: check build environment and download config file
         run: |
-          cd openwrt
+          cd immortalwrt
           make defconfig
           rm .config
-          curl -L -o .config "https://raw.githubusercontent.com/hosxy/openwrt-build/refs/heads/master/config"
+          curl -L -o .config "https://raw.githubusercontent.com/hosxy/openwrt-build/refs/heads/master/config-x64"
 
        #下载构建依赖
       - name: download build dependence
