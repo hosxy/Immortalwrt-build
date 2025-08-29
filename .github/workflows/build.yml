@@ -13,7 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Maximize build space
+      - name: 检查服务器配置
+        run: |
+          echo "若分配的服务器性能不足，务必及时取消，重新运行！"
+          echo -e "------------------------------- CPU信息 -------------------------------\n"
+          echo "CPU物理数量:$(cat /proc/cpuinfo| grep "physical id"| sort| uniq| wc -l)"
+          echo -e "CPU核心及版本信息: $(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
+          echo -e "------------------------------- 内存信息 -------------------------------\n"
+          echo "已安装内存详细信息: "
+          sudo lshw -short -C memory | grep GiB
+          echo -e "\n"
+          echo -e "------------------------------- 磁盘信息 -------------------------------\n"
+          echo -e "磁盘数量: $(ls /dev/sd* | grep -v [1-9] | wc -l) \n"
+          echo "------------------------------- 磁盘详情 -------------------------------\n"
+      
+      - name: 最大化磁盘空间
         uses: easimon/maximize-build-space@master
         with:
           root-reserve-mb: 512
@@ -27,10 +41,10 @@ jobs:
           
       - uses: actions/checkout@v4
 
-      - name: check space
+      - name: 检查磁盘空间
         run: df -h
        
-      - name: install depences
+      - name: 安装依赖
         run: |
           sudo apt purge firefox snap*
           sudo apt update -y
@@ -41,25 +55,36 @@ jobs:
           df -h
           
 
-      - name: download OpenWRT source and update feeds
+      - name: 下载源码、更新 feeds
         run: |
           git clone https://github.com/openwrt/openwrt.git -b openwrt-24.10
           openwrt/scripts/feeds update -a
           openwrt/scripts/feeds install -a
           git clone https://github.com/jerrykuku/luci-theme-argon.git openwrt/package/luci-theme-argon
 
+      # 开启缓存
+      - uses: stupidloud/cachewrtbuild@main
+        with:
+          ccache: 'true'
+          toolchain: 'true'
+          mixkey: 'ramips'
+          prefix: 'openwrt'
+
+      #下载配置文件
       - name: check build environment and download config file
         run: |
           cd openwrt
           make defconfig
           rm .config
           curl -L -o .config "https://raw.githubusercontent.com/hosxy/openwrt-build/refs/heads/master/config"
-       
+
+       #下载构建依赖
       - name: download build dependence
         run: |
           cd openwrt
           make download V=s -j$(nproc)
 
+      #开始编译
       - name: build openwrt
         run: |
           cd openwrt
