@@ -1,4 +1,4 @@
-# ImmortalWRT for G7505
+# ImmortalWRT for Intel G7505
 + 网卡驱动
     + 有线网卡：只支持 I225/I226
     + 无线网卡：不支持
