@@ -37,7 +37,7 @@ jobs:
           sudo apt purge firefox snap* fwupd gfortran* nginx* azure-cli powershell mono-devel
           sudo apt update -y
           sudo apt upgrade -y
-          sudo apt install -y autoconf automake autopoint binutils build-essential bzip2 ccache clang cmake cpio curl flex gawk gettext git gperf intltool libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool llvm msmtp ninja-build p7zip p7zip-full patch pkgconf python3 squashfs-tools swig unzip vim wget xxd zlib1g-dev
+          sudo apt install -y autoconf automake autopoint binutils build-essential bzip2 ccache clang llvm cmake cpio curl flex gawk gettext git gperf intltool libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool msmtp ninja-build p7zip p7zip-full patch pkgconf python3 squashfs-tools swig unzip vim wget xxd zlib1g-dev
           sudo apt autoremove
           sudo apt clean
           df -h
@@ -103,7 +103,11 @@ jobs:
           sed -i s/'$(GO_AMD64)'/v3/g immortalwrt/feeds/packages/lang/golang/golang-package.mk
           sed -i s/CARGO_PROFILE_RELEASE_OPT_LEVEL=z/CARGO_PROFILE_RELEASE_OPT_LEVEL=3/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
           sed -i s/'RUSTFLAGS="$(CARGO_RUSTFLAGS)"'/'RUSTFLAGS="$(CARGO_RUSTFLAGS) -Ctarget-cpu=tigerlake"'/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
-         
+
+      - name: 禁止从 rust-lang 的 ci 下载预编译的 LLVM (由于老版本经常被清理掉，导致经常出错无法下载)
+        run: |
+          sed -i s/llvm.download-ci-llvm=true/llvm.download-ci-llvm=false/g immortalwrt/feeds/packages/lang/rust/Makefile
+  
       - name: 编译工具链
         run: |
           cd immortalwrt
