@@ -99,7 +99,8 @@ jobs:
           sed -i s/CARGO_PROFILE_RELEASE_OPT_LEVEL=z/CARGO_PROFILE_RELEASE_OPT_LEVEL=3/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
           sed -i s/'RUSTFLAGS="$(CARGO_RUSTFLAGS)"'/'RUSTFLAGS="$(CARGO_RUSTFLAGS) -Ctarget-cpu=tigerlake"'/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
 
-      - name: 禁止从 rust-lang 的 ci 下载预编译的 LLVM (由于老版本经常被清理掉，导致经常出错，无法下载)
+      # 禁止从 rust-lang 的 ci 下载预编译的 LLVM (由于老版本经常被清理掉，导致经常出错，无法下载)
+      - name: 禁止下载预编译 LLVM
         run: |
           sed -i s/llvm.download-ci-llvm=true/llvm.download-ci-llvm=false/g immortalwrt/feeds/packages/lang/rust/Makefile
   
