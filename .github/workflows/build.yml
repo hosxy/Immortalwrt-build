@@ -28,7 +28,20 @@ jobs:
           echo -e "------------------------------- 内存信息 -------------------------------\n"
           echo "已安装内存详细信息: "
           sudo lshw -short -C memory | grep GiB
-          
+                 
+      - name: 初始化编译环境
+        uses: actions/checkout@v4
+       
+      - name: 安装依赖
+        run: |
+          sudo apt purge firefox snap* fwupd gfortran* nginx* azure-cli powershell mono-devel
+          sudo apt update -y
+          sudo apt upgrade -y
+          sudo apt install -y autoconf automake autopoint binutils build-essential bzip2 ccache clang cmake cpio curl flex gawk gettext git gperf intltool libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool llvm msmtp ninja-build p7zip p7zip-full patch pkgconf python3 squashfs-tools swig unzip vim wget xxd zlib1g-dev
+          sudo apt autoremove
+          sudo apt clean
+          df -h
+
       - name: 最大化磁盘空间
         uses: easimon/maximize-build-space@master
         with:
@@ -40,26 +53,12 @@ jobs:
           remove-haskell: 'true'
           remove-codeql: 'true'
           remove-docker-images: 'true'
-          
-      - name: 初始化编译环境
-        uses: actions/checkout@v4
-       
-      - name: 安装依赖
-        run: |
-          sudo apt purge firefox snap*
-          sudo apt update -y
-          sudo apt upgrade -y
-          sudo apt install -y autoconf automake autopoint binutils build-essential bzip2 ccache clang cmake cpio curl flex gawk gettext git gperf intltool libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool llvm msmtp ninja-build p7zip p7zip-full patch pkgconf python3 squashfs-tools swig unzip vim wget xxd zlib1g-dev
-          sudo apt autoremove
-          sudo apt clean
-          df -h
-          
+
       #- name: 安装 Golang
       #  uses: actions/setup-go@v3
       #  with:
       #    go-version: 'stable'
     
-
       - name: 下载源码、更新 feeds
         run: |
           git clone -b ${{env.VERSION}} --single-branch --filter=blob:none ${{env.URL}}
@@ -84,7 +83,16 @@ jobs:
       - name: 下载构建依赖
         run: |
           cd immortalwrt
+          nproc
           make download -j$(nproc)
+
+      - name: 检查下载的文件是否完整
+        run: |
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
+          make download -j$(nproc)
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
 
       # 使 golang 编译的程序目标架构提升到 X86_64-V3
       # 使 Rust 编译的程序使用 O3 优化，目标架构提升到 tigerlake(11代intel，支持AVX512)
@@ -94,14 +102,58 @@ jobs:
           sed -i s/CARGO_PROFILE_RELEASE_OPT_LEVEL=z/CARGO_PROFILE_RELEASE_OPT_LEVEL=3/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
           sed -i s/'RUSTFLAGS="$(CARGO_RUSTFLAGS)"'/'RUSTFLAGS="$(CARGO_RUSTFLAGS) -Ctarget-cpu=tigerlake"'/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
          
-      - name: 编译
+      - name: 编译工具链
         run: |
           cd immortalwrt
-          make V=s -j$(nproc)
-      
-      - name: 检查磁盘空间
+          make tools/compile -j$(nproc) || make tools/compile -j1 V=s
+          make toolchain/compile -j$(nproc) || make toolchain/compile -j1 V=s
+
+      - name: 清除编译工具链的中间产物
+        run: |
+          cd immortalwrt
+          rm -rf dl/*
+          rm -rf build_dir/host/*
+          rm -rf build_dir/toolchain-*
+              
+      - name: 检查磁盘空间-1
+        if: (!cancelled())
         run: df -h
-        
+
+      - name: 编译内核
+        run: |
+          cd immortalwrt
+          make target/linux/compile -j$(nproc) || make target/linux/compile -j1 V=s
+          
+      - name: 空间使用情况-2
+        if: (!cancelled())
+        run: df -h
+
+      - name: 编译插件
+        run: |
+          cd immortalwrt
+          make package/compile -j$(nproc) || make package/compile -j1 V=s
+          make package/index
+          make package/install -j$(nproc) || make package/install -j1 V=s
+
+      - name: 清除编译插件的中间产物
+        run: |
+          cd immortalwrt
+          rm -rf build_dir/target-*/host
+      
+      - name: 空间使用情况-3
+        if: (!cancelled())
+        run: df -h
+
+      - name: 编译固件
+        run: |
+          cd immortalwrt
+          make target/install -j$(nproc) || make target/install -j1 V=s
+          make checksum
+
+      - name: 空间使用情况-4
+        if: (!cancelled())
+        run: df -h      
+
       - uses: actions/upload-artifact@v4
         with:
           name: immortalwrt
