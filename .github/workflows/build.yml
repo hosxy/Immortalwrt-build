@@ -10,7 +10,7 @@ on:
 
 env:
   URL: https://github.com/immortalwrt/immortalwrt
-  VERSION: v24.10.2
+  VERSION: 24.10
   FIRMWARE_DIR: immortalwrt/bin/targets/x86/64
   
 
@@ -56,7 +56,7 @@ jobs:
 
       - name: 下载源码、更新 feeds
         run: |
-          git clone -b ${{env.VERSION}} --single-branch --filter=blob:none ${{env.URL}}
+          git clone -b openwrt-${{env.VERSION}} --single-branch --filter=blob:none ${{env.URL}}
           immortalwrt/scripts/feeds update -a
           immortalwrt/scripts/feeds install -a
  
