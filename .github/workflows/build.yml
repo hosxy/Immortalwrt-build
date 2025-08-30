@@ -100,7 +100,6 @@ jobs:
 
       - name: 上传至 release
         uses: softprops/action-gh-release@v2
-        if: github.ref_type == 'tag'
         with:
           files: |
             ${{env.firmware_dir}}/immortalwrt-x86-64-generic-squashfs-combined-efi.img.gz
