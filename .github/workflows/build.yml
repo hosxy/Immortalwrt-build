@@ -133,7 +133,7 @@ jobs:
       - name: 编译插件
         run: |
           cd immortalwrt
-          make package/compile -j$(nproc) || make package/compile -j1 V=s
+          make package/compile -j$(nproc) || make package/compile -j$(nproc) || make package/compile -j1 V=s
           make package/index
           make package/install -j$(nproc) || make package/install -j1 V=s
 
