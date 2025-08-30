@@ -41,7 +41,8 @@ jobs:
           remove-codeql: 'true'
           remove-docker-images: 'true'
           
-      - uses: actions/checkout@v4
+      - name: 初始化编译环境
+        uses: actions/checkout@v4
 
       - name: 检查磁盘空间
         run: df -h
@@ -94,7 +95,7 @@ jobs:
       - name: 下载构建依赖
         run: |
           cd immortalwrt
-          make download V=s -j$(nproc)
+          make download -j$(nproc)
 
       - name: 编译
         run: |
