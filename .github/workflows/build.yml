@@ -64,7 +64,7 @@ jobs:
 
       - name: 下载源码、更新 feeds
         run: |
-          git clone -b openwrt-${{env.VERSION}} --single-branch --filter=blob:none ${{env.URL}}
+          git clone -b ${{env.VERSION}} --single-branch --filter=blob:none ${{env.URL}}
           immortalwrt/scripts/feeds update -a
           immortalwrt/scripts/feeds install -a
 
