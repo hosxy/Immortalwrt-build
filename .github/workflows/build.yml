@@ -93,6 +93,7 @@ jobs:
           make download -j$(nproc)
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
+           make download -j$(nproc)
 
       # 使 golang 编译的程序目标架构提升到 X86_64-V3
       # 使 Rust 编译的程序使用 O3 优化，目标架构提升到 tigerlake(11代intel，支持AVX512)
