@@ -1,12 +1,18 @@
 # This is a basic workflow to help you get started with Actions
 
-name: OpenWRT Build
+name: ImmortalWRT Build
 
 # Controls when the workflow will run
 on:
   workflow_dispatch:
   release:
     types: [published]
+
+env:
+  url: https://github.com/immortalwrt/immortalwrt
+  version: v24.10.2
+  firmware_dir: immortalwrt/bin/targets/x86/64
+  
 
 jobs:
   build:
@@ -50,7 +56,7 @@ jobs:
           sudo apt clean
           df -h
           
-      - name: 安装 Go 1.21.1
+      - name: 安装 Golang
         uses: actions/setup-go@v3
         with:
           go-version: 'stable'
@@ -58,7 +64,7 @@ jobs:
 
       - name: 下载源码、更新 feeds
         run: |
-          git clone -b openwrt-24.10 --single-branch --filter=blob:none https://github.com/immortalwrt/immortalwrt
+          git clone -b openwrt-${{env.version}} --single-branch --filter=blob:none ${{env.url}}
           immortalwrt/scripts/feeds update -a
           immortalwrt/scripts/feeds install -a
 
@@ -70,22 +76,19 @@ jobs:
           mixkey: 'x64'
           prefix: 'immortalwrt'
 
-      #下载配置文件
-      - name: check build environment and download config file
+      - name: 下载配置文件
         run: |
           cd immortalwrt
           make defconfig
           rm .config
           curl -L -o .config "https://raw.githubusercontent.com/hosxy/openwrt-build/refs/heads/master/config-x64"
 
-       #下载构建依赖
-      - name: download build dependence
+      - name: 下载构建依赖
         run: |
           cd immortalwrt
           make download V=s -j$(nproc)
 
-      #开始编译
-      - name: build openwrt
+      - name: 编译
         run: |
           cd immortalwrt
           make V=s -j$(nproc)
@@ -93,6 +96,17 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: immortalwrt
-          path: immortalwrt/bin/targets/x86/64/*.img.gz
+          path: ${{env.firmware_dir}}/*.img.gz
+
+      - name: 上传至 release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          files: |
+            ${{env.firmware_dir}}/immortalwrt-x86-64-generic-squashfs-combined-efi.img.gz
+            ${{env.firmware_dir}}/immortalwrt-x86-64-generic-squashfs-rootfs.img.gz
+            
+            
+            
         
           
