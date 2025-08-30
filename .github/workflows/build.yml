@@ -88,6 +88,7 @@ jobs:
 
       - name: 检查下载的文件是否完整
         run: |
+          cd immortalwrt
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
           make download -j$(nproc)
