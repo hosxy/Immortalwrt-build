@@ -65,15 +65,7 @@ jobs:
           git clone -b ${{env.VERSION}} --single-branch --filter=blob:none ${{env.URL}}
           immortalwrt/scripts/feeds update -a
           immortalwrt/scripts/feeds install -a
-
-      # 使 golang 编译的程序目标架构提升到 X86_64-V3
-      # 使 Rust 编译的程序使用 O3 优化，目标架构提升到 tigerlake(11代intel，支持AVX512)
-      - name: 为 golang 和 Rust 开启优化选项
-        run: |
-          sed -i s/'$(GO_AMD64)'/v3/g immortalwrt/feeds/packages/lang/golang/golang-package.mk
-          sed -i s/CARGO_PROFILE_RELEASE_OPT_LEVEL=z/CARGO_PROFILE_RELEASE_OPT_LEVEL=3/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
-          sed -i s/'RUSTFLAGS="$(CARGO_RUSTFLAGS)"'/'RUSTFLAGS="$(CARGO_RUSTFLAGS) -Ctarget-cpu=tigerlake"'/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
-          
+ 
       # 开启缓存
       - uses: stupidloud/cachewrtbuild@main
         with:
@@ -94,6 +86,14 @@ jobs:
           cd immortalwrt
           make download -j$(nproc)
 
+      # 使 golang 编译的程序目标架构提升到 X86_64-V3
+      # 使 Rust 编译的程序使用 O3 优化，目标架构提升到 tigerlake(11代intel，支持AVX512)
+      - name: 为 golang 和 Rust 开启优化选项
+        run: |
+          sed -i s/'$(GO_AMD64)'/v3/g immortalwrt/feeds/packages/lang/golang/golang-package.mk
+          sed -i s/CARGO_PROFILE_RELEASE_OPT_LEVEL=z/CARGO_PROFILE_RELEASE_OPT_LEVEL=3/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
+          sed -i s/'RUSTFLAGS="$(CARGO_RUSTFLAGS)"'/'RUSTFLAGS="$(CARGO_RUSTFLAGS) -Ctarget-cpu=tigerlake"'/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
+         
       - name: 编译
         run: |
           cd immortalwrt
