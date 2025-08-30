@@ -30,7 +30,7 @@ jobs:
           sudo lshw -short -C memory | grep GiB
                  
       - name: 初始化编译环境
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
        
       - name: 安装依赖
         run: |
