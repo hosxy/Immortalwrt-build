@@ -9,9 +9,9 @@ on:
     types: [published]
 
 env:
-  url: https://github.com/immortalwrt/immortalwrt
-  version: v24.10.2
-  firmware_dir: immortalwrt/bin/targets/x86/64
+  URL: https://github.com/immortalwrt/immortalwrt
+  VERSION: v24.10.2
+  FIRMWARE_DIR: immortalwrt/bin/targets/x86/64
   
 
 jobs:
@@ -64,10 +64,18 @@ jobs:
 
       - name: 下载源码、更新 feeds
         run: |
-          git clone -b openwrt-${{env.version}} --single-branch --filter=blob:none ${{env.url}}
+          git clone -b openwrt-${{env.VERSION}} --single-branch --filter=blob:none ${{env.URL}}
           immortalwrt/scripts/feeds update -a
           immortalwrt/scripts/feeds install -a
 
+      # 使 golang 编译的程序目标架构提升到 X86_64-V3
+      # 使 Rust 编译的程序使用 O3 优化，目标架构提升到 tigerlake(11代intel，支持AVX512)
+      - name: 为 golang 和 Rust 开启优化选项
+        run: |
+          sed -i s/'$(GO_AMD64)'/v3/g immortalwrt/feeds/packages/lang/golang/golang-package.mk
+          sed -i s/CARGO_PROFILE_RELEASE_OPT_LEVEL=z/CARGO_PROFILE_RELEASE_OPT_LEVEL=3/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
+          sed -i s/'RUSTFLAGS="$(CARGO_RUSTFLAGS)"'/'RUSTFLAGS="$(CARGO_RUSTFLAGS) -Ctarget-cpu=tigerlake"'/g immortalwrt/feeds/packages/lang/rust/rust-values.mk
+          
       # 开启缓存
       - uses: stupidloud/cachewrtbuild@main
         with:
@@ -96,14 +104,14 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: immortalwrt
-          path: ${{env.firmware_dir}}/*.img.gz
+          path: ${{env.FIRMWARE_DIR}}/*.img.gz
 
       - name: 上传至 release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ${{env.firmware_dir}}/immortalwrt-x86-64-generic-squashfs-combined-efi.img.gz
-            ${{env.firmware_dir}}/immortalwrt-x86-64-generic-squashfs-rootfs.img.gz
+            ${{env.FIRMWARE_DIR}}/immortalwrt-x86-64-generic-squashfs-combined-efi.img.gz
+            ${{env.FIRMWARE_DIR}}/immortalwrt-x86-64-generic-squashfs-rootfs.img.gz
             
             
             
