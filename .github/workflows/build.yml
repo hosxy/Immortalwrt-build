@@ -54,10 +54,10 @@ jobs:
           sudo apt clean
           df -h
           
-      - name: 安装 Golang
-        uses: actions/setup-go@v3
-        with:
-          go-version: 'stable'
+      #- name: 安装 Golang
+      #  uses: actions/setup-go@v3
+      #  with:
+      #    go-version: 'stable'
     
 
       - name: 下载源码、更新 feeds
