@@ -65,7 +65,7 @@ jobs:
           cd immortalwrt
           make defconfig
           rm .config
-          cp ../config-x64 .config
+          curl -L -o .config "https://raw.githubusercontent.com/hosxy/Immortalwrt-build/refs/heads/master/config-x64"
 
       - name: 下载构建依赖
         run: |
