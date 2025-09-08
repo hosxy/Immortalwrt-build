@@ -66,13 +66,12 @@ jobs:
           make defconfig
           rm .config
           cp ../config-x64 .config
-          #curl -L -o .config "https://raw.githubusercontent.com/hosxy/Immortalwrt-build/refs/heads/master/config-x64"
 
       - name: 下载构建依赖
         run: |
           cd immortalwrt
           nproc
-          make download -j$(nproc)
+          make download -j$(nproc) || make download -j1
 
       - name: 检查下载的文件是否完整
         run: |
