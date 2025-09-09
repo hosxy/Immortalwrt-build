@@ -156,6 +156,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
+            ${{env.FIRMWARE_DIR}}/immortalwrt-x86-64-generic.manifest
             ${{env.FIRMWARE_DIR}}/immortalwrt-x86-64-generic-squashfs-combined-efi.img.gz
             ${{env.FIRMWARE_DIR}}/immortalwrt-x86-64-generic-squashfs-rootfs.img.gz
             
