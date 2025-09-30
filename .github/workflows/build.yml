@@ -37,7 +37,7 @@ jobs:
           sudo apt purge firefox snap* fwupd gfortran* nginx* azure-cli powershell mono-devel
           sudo apt update -y
           sudo apt upgrade -y
-          sudo apt install -y autoconf automake autopoint binutils build-essential bzip2 ccache clang llvm cmake cpio curl flex gawk gettext git gperf intltool libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool msmtp ninja-build p7zip p7zip-full patch pkgconf python3 squashfs-tools swig unzip vim wget xxd zlib1g-dev
+          sudo apt install -y autoconf automake autopoint binutils build-essential bzip2 zstd ccache clang llvm cmake cpio curl flex gawk gettext git gperf intltool libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool msmtp ninja-build p7zip p7zip-full patch pkgconf python3 squashfs-tools swig unzip vim wget xxd zlib1g-dev
           sudo apt autoremove
           sudo apt clean
           df -h
@@ -63,9 +63,8 @@ jobs:
       - name: 下载配置文件
         run: |
           cd immortalwrt
-          make defconfig
-          rm .config
           curl -L -o .config "https://raw.githubusercontent.com/hosxy/Immortalwrt-build/refs/heads/master/config-x64"
+          make defconfig
 
       - name: 下载构建依赖
         run: |
