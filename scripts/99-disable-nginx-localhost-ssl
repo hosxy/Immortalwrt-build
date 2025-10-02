@@ -1,0 +1,17 @@
+#!/bin/sh
+
+uci delete nginx._redirect2ssl
+
+uci set nginx._no_ssl_lan=server
+uci set nginx._no_ssl_lan.listen='80 default_server'
+uci add_list nginx._no_ssl_lan.listen='[::]:80 default_server'
+uci set nginx._no_ssl_lan.server_name='_no_ssl_lan'
+uci set nginx._no_ssl_lan.include='restrict_locally'
+uci add_list nginx._no_ssl_lan.include='conf.d/*.locations'
+uci set nginx._no_ssl_lan.access_log='off; # logd openwrt'
+
+uci set nginx._lan.listen='443 ssl'
+uci add_list nginx._lan.listen='[::]:443 ssl'
+uci commit nginx
+
+exit 0
