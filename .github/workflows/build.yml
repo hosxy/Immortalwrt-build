@@ -63,7 +63,9 @@ jobs:
       - name: 下载配置文件
         run: |
           cd immortalwrt
-          curl -L -o .config "https://raw.githubusercontent.com/hosxy/Immortalwrt-build/refs/heads/master/config-x64"
+          mkdir -p files/etc/uci-defaults
+          curl -L -o files/etc/uci-defaults/99-disable-nginx-localhost-ssl "https://raw.githubusercontent.com/hosxy/Immortalwrt-build/master/scripts/99-disable-nginx-localhost-ssl"
+          curl -L -o .config "https://raw.githubusercontent.com/hosxy/Immortalwrt-build/master/config-x64"
           make defconfig
 
       - name: 下载构建依赖
