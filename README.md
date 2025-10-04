@@ -12,4 +12,4 @@
 + root 分区大小为 1024MB
 + kernel 分区大小为 32MB
 + 使用 nginx 替换 uhttp
-    + 管理页面不使用 https
+    + 管理页面默认不使用 https（使用 nginx 后会默认启用 https）
