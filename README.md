@@ -11,5 +11,6 @@
     + Rust：使用 O3 优化，目标架构为 `tigerlake` (11 代 intel，支持 AVX512)
 + root 分区大小为 1024MB
 + kernel 分区大小为 32MB
++ 增加内核模块：`tcp_brutal`
 + 使用 nginx 替换 uhttp
     + 管理页面默认不使用 https（使用 nginx 后会默认启用 https）
