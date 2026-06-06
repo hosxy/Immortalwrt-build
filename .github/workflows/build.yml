@@ -58,7 +58,7 @@ jobs:
         run: |
           git clone -b ${{env.BRANCH}} --single-branch --filter=blob:none ${{env.URL}}
           immortalwrt/scripts/feeds update -a
-          echo "src-git mihomo https://github.com/hosxy/Immortalwrt-build.git;package" >> immortalwrt/feeds.conf.default
+          echo "src-git myselfpkg https://github.com/hosxy/Immortalwrt-build.git;package" >> immortalwrt/feeds.conf.default
           immortalwrt/scripts/feeds update -a
           immortalwrt/scripts/feeds install -a
 
