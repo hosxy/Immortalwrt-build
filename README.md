@@ -7,7 +7,7 @@
     + 开启 LTO
     + 使用 Ofast 优化
     + 目标架构为 `tigerlake` (11 代 intel，支持 AVX512)
-    + golang：目标架构提升到 X86_64-V4
+    + golang：目标架构为 X86_64-V4
     + Rust：使用 O3 优化，目标架构为 `tigerlake` (11 代 intel，支持 AVX512)
 + root 分区大小为 1024MB
 + kernel 分区大小为 32MB
