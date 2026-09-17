@@ -10,7 +10,7 @@ on:
 
 env:
   URL: https://github.com/immortalwrt/immortalwrt
-  BRANCH: v25.12.1
+  BRANCH: v25.12.2
   FIRMWARE_DIR: immortalwrt/bin/targets/x86/64
   
 
