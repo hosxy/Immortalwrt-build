@@ -2,12 +2,12 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=tcp-brutal
-PKG_VERSION:=2.0.0
+PKG_VERSION:=2.0.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/HyNetworks/tcp-brutal/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=10d2906364e081ef5e09da9048363ca7c8cf83c5b21688e166a77c39302f7f1b
+PKG_HASH:=55889848e85463a4547c2691e6cf7bd1b140305b808aa4004b8c2a19d1f44efd
 PKG_LICENSE:=GPL-3.0
 
 PKG_MAINTAINER:=hosxy <hosxy@live.com>
